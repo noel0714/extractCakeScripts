@@ -7,7 +7,6 @@ class Diposer():
         self.URL = URL
         self.response = requests.get(self.URL)
         self.soup = BeautifulSoup(self.response.content, "html.parser")
-        self.soup.br.replace_with('\n')
 
         self.en_tag = "h3"
         self.en_class = "Heading-gyg8vb-0 dbvomz"
@@ -16,10 +15,6 @@ class Diposer():
 
     def parsing(self, t):
         s = str(t)
-        s = s.replace("<br>", '\n')
-        s = s.replace("<br/>", '\n')
-        s = s.replace("<b>", ' ')
-        s = s.replace("</b>", "")
 
         while True:
             if s[0] == '>':
@@ -33,7 +28,7 @@ class Diposer():
 
         return s[1:-1]
 
-    def getText(self, tag, cla):
+    def tagToString(self, tag, cla):
         text = self.soup.findAll(tag, {"class" : cla})
         ret = []
 
@@ -42,10 +37,8 @@ class Diposer():
 
         return ret
 
-    def asText(self, write_title):
-        english = self.getText(self.en_tag, self.en_class)
-        korean = self.getText(self.ko_tag, self.ko_class)
+    def getText(self):
+        english = self.tagToString(self.en_tag, self.en_class)
+        korean = self.tagToString(self.ko_tag, self.ko_class)
 
-        with open(write_title, 'w') as f:
-            for e, k in zip(english, korean):
-                f.write(e + " " + k + '\n')
+        return english, korean
